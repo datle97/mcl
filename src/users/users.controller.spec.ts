@@ -1,3 +1,4 @@
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { User } from './user.entity';
@@ -12,11 +13,6 @@ describe('UsersController', () => {
   let users: User[];
   const mockEmail = 'asdf@gmail.com';
   const mockPassword = 'qweqwe';
-  const mockUser = {
-    id: 123,
-    email: mockEmail,
-    password: mockPassword,
-  } as User;
 
   beforeEach(async () => {
     users = [];
@@ -50,8 +46,8 @@ describe('UsersController', () => {
       //   } as User),
     };
     fakeAuthService = {
-      signup: (email, password) =>
-        Promise.resolve({ id: 123, email, password } as User),
+      // signup: (email, password) =>
+      //   Promise.resolve({ id: 123, email, password } as User),
       signin: (email, password) =>
         Promise.resolve({ id: 123, email, password } as User),
     };
@@ -77,9 +73,52 @@ describe('UsersController', () => {
   });
 
   it('findAllUsers returns a list of users with the given email', async () => {
-    const [user] = await controller.findAllUser('asdf2@gmail.com');
+    const users = await controller.findAllUser('asdf2@gmail.com');
+    expect(users.length).toEqual(1);
+    expect(users[0].email).toEqual('asdf2@gmail.com');
+  });
+  it('findUser returns a single user with the given id', async () => {
+    const user = await controller.findUser('123');
+    expect(user.id).toEqual(123);
+  });
+  it('findUser throws an error if user with given id is not found', async () => {
+    fakeUsersService.findOne = (id) => {
+      if (!id) {
+        throw new NotFoundException('User not found');
+      }
 
-    console.log(user);
-    expect(user.email).toEqual('asdf2@gmail.com');
+      const users = [
+        {
+          id: 1234,
+          email: mockEmail,
+          password: mockPassword,
+        } as User,
+      ];
+
+      const user = users.find((item) => +item.id === +id);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      return Promise.resolve(user);
+    };
+
+    await expect(controller.findUser('12345')).rejects.toThrow(
+      NotFoundException,
+    );
+  });
+
+  it('signin updates session object and returns user', async () => {
+    const session: any = {};
+    const user = await controller.signin(
+      {
+        email: mockEmail,
+        password: mockPassword,
+      },
+      session,
+    );
+
+    expect(+session.userId).toEqual(+user.id);
   });
 });

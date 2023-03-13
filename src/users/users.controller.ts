@@ -28,7 +28,7 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
-  @Post('/whoami')
+  @Get('/whoami')
   @UseGuards(AuthGuard)
   async whoAmI(
     @CurrentUser()
@@ -46,7 +46,7 @@ export class UsersController {
   }
 
   @Post('/signup')
-  async createUser(
+  async signup(
     @Body()
     body: CreateUserDto,
     @Session()
@@ -78,12 +78,13 @@ export class UsersController {
   }
 
   @Get('/:id')
-  findUser(
+  async findUser(
     @Param('id')
     id: string,
   ) {
-    console.log('handler running');
-    return this.userService.findOne(+id);
+    const user = await this.userService.findOne(+id);
+
+    return user;
   }
 
   @Patch('/:id')
