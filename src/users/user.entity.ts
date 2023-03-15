@@ -20,6 +20,10 @@ export class User {
   @Column()
   password: string;
 
+  // todo: change default, change key admin to number for permissions
+  @Column({ default: true })
+  admin: boolean;
+
   @OneToMany(() => Report, (report) => report.user)
   reports: Report[];
 
