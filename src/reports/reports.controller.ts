@@ -4,13 +4,13 @@ import {
   Param,
   Patch,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
+import { Request as TRequest } from 'express';
 import { AdminGuard } from 'src/guards/admin.guard';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { Serialize } from 'src/interceptors/serialize.interceptor';
-import { CurrentUser } from 'src/users/decorators/current-user.decorator';
-import { User } from 'src/users/user.entity';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { ReportDto } from './dtos/report.dto';
@@ -26,9 +26,10 @@ export class ReportsController {
   async createReport(
     @Body()
     body: CreateReportDto,
-    @CurrentUser()
-    user: User,
+    @Request()
+    request: TRequest,
   ) {
+    const user = request.currentUser;
     return this.reportsService.create(body, user);
   }
 
