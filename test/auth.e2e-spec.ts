@@ -8,7 +8,6 @@ describe('Authtication System', () => {
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
-      // imports: [UsersModule],
       imports: [AppModule],
     }).compile();
 

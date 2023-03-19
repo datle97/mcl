@@ -1,5 +1,4 @@
 import { Expose, Transform } from 'class-transformer';
-import { User } from 'src/users/user.entity';
 import { Report } from '../report.entity';
 
 export class ReportDto {

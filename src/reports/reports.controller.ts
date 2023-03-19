@@ -10,9 +10,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Request as TRequest } from 'express';
-import { AdminGuard } from 'src/guards/admin.guard';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { AdminGuard } from '../guards/admin.guard';
+import { AuthGuard } from '../guards/auth.guard';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { ApproveReportDto } from './dtos/approve-report.dto';
 import { CreateReportDto } from './dtos/create-report.dto';
 import { GetEstimateDto } from './dtos/get-estimate.dto';
